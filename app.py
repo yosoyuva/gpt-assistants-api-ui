@@ -81,6 +81,9 @@ class EventHandler(AssistantEventHandler):
         st.session_state.current_markdown.markdown(format_text, True)
         st.session_state.chat_log.append({"name": "assistant", "msg": format_text})
 
+        # Save the interaction to a file
+        save_interaction(st.session_state.chat_log[-2]["msg"], format_text)
+
     @override
     def on_tool_call_created(self, tool_call):
         if tool_call.type == "code_interpreter":
@@ -329,6 +332,11 @@ def main():
         load_chat_screen(single_agent_id, single_agent_title)
     else:
         st.error("No assistant configurations defined in environment variables.")
+
+
+def save_interaction(user_msg, assistant_msg):
+    with open("chat_log.txt", "a") as f:
+        f.write(f"User: {user_msg}\nAssistant: {assistant_msg}\n\n")
 
 
 if __name__ == "__main__":
